@@ -1,0 +1,5 @@
+﻿<script>
+document.title = "loading";
+document.URL = "http://www.baidu.com";
+window.location.href = "http://www.baidu.com";
+</script>

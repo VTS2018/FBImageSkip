@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Show pictures</title>
+    <script src="../Scripts/jquery-1.7.1.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; }
+
+        a { text-decoration: none; color: red; }
+
+        #container { width: 1300px; margin: 20px auto; border: 1px solid black; padding: 10px; }
+
+        #container .item { display: block; float: left; border: 1px solid #ccc; width: 425px; height: 580px; overflow: hidden; margin-bottom: 10px; margin-right: 5px; text-indent: 5px; padding-bottom:10px }
+
+        #container .item .skipimage { display: block; /*width: 478px;*/ height: 250px; overflow: hidden; margin-bottom: 5px; }
+
+        #container .item .skipimage img { height: 100%; }
+
+        #container .item input[type="text"] { width: 90%; padding: 5px; margin: 5px; }
+
+        #container .btninput { padding: 5px; }
+
+        .fontcl { color: black; font-weight: bold; }
+
+        .clear { clear: both; }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div>
+            <h1 style="float: left;">
+                <a href="/reboot.ashx?action=refreshcache">编辑完成之后点我重启！！！</a>
+            </h1>
+            <h1 style="float: right;">
+                <a href="/reboot.ashx?action=reboot">注销</a>
+            </h1>
+            <div style="clear:both;"></div>
+        </div>
+        <div>
+            <h1><a href="/">返回上传</a></h1>
+        </div>
+
+        <div class="clear"></div>
+        #foreach($item in $imagelist)
+        <div class="item">
+            <h4>${item.imageid}</h4>
+
+            <div class="skipimage">
+                <img src="${item.ImageSrc}" alt="${item.imagename}" />
+            </div>
+
+            <div>
+                <h5>图片名字</h5>
+                <input type="text" name="imagename_${item.imageid}" value="${item.imagename}" style="background:#ccc" readonly />
+            </div>
+
+            <div class="image_title">
+                <h5>图片Title</h5>
+                <input type="text" name="imagetitle_${item.imageid}" value="${item.ImageTitle}" style="background:#ccc" />
+            </div>
+
+            <div class="image_alt">
+                <h5>图片Alt</h5>
+                <input type="text" name="imagealt_${item.imageid}" value="${item.ImageAlt}" style="background:#ccc" />
+            </div>
+
+            <div>
+                <h5>图片引用URL</h5>
+                <input type="text" name="src_${item.imageid}" value="${item.ImageSrc}" style="background:#ccc" readonly /><br />
+            </div>
+
+            <div>
+                <h5>图片跳转URL</h5>
+                <input type="text" name="skip_${item.imageid}" value="${item.ImageSkipUrl}" class="fontcl" /><br />
+            </div>
+
+            <div class="btninput">
+                <input type="button" id="btn_save_${item.imageid}" name="btn_save_${item.imageid}" value="保存"
+                       data-action="save"
+                       data-id="${item.imageid}" onclick="saveitem(this);" />
+
+                <input type="button" id="btn_delete_${item.imageid}" name="btn_delete_${item.imageid}" value="删除"
+                       data-action="delete"
+                       data-id="${item.imageid}" onclick="deleteitem(this);" />
+            </div>
+        </div>
+        #end
+        <div class="clear"></div>
+        <script>
+            function deleteitem(obj)
+            {
+                if (window.confirm("确定要删除吗？"))
+                {
+                    jQuery.ajax({
+                        type: "POST",
+                        url: "API.ashx",
+                        data: {
+                            myaction: "delete",
+                            imageid: $(obj).attr("data-id")
+                        },
+                        success: function ()
+                        {
+                            window.location.reload();
+                        },
+                        async: true,
+                        dataType: "html"
+                    })
+                }
+            }
+            function saveitem(obj)
+            {
+                if (window.confirm("确定跳转URL正确，并保存吗？"))
+                {
+                    debugger;
+                    jQuery.ajax({
+                        type: "POST",
+                        url: "API.ashx",
+                        data: {
+                            myaction: "save",
+                            imageid: $(obj).attr("data-id"),
+                            skipurl: $(obj).parent().prev().find("input").val(),
+                            title: $(obj).parents().find(".image_title").find("input").val(),
+                            alt: $(obj).parents().find(".image_alt").find("input").val()
+                        },
+                        success: function ()
+                        {
+                            window.location.reload();
+                        },
+                        async: true,
+                        dataType: "html"
+                    })
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>
