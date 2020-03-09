@@ -14,6 +14,7 @@ namespace FBImageSkip
         public void ProcessRequest(HttpContext context)
         {
             context.Response.ContentType = "text/html";
+
             //图片数据库
             string imageDataPath = context.Server.MapPath("~/imagedata.txt");
 
@@ -25,6 +26,9 @@ namespace FBImageSkip
                 HttpPostedFile file = fileColl[0];
 
                 string fileName = file.FileName;
+                string fileExt = Path.GetExtension(fileName);
+                fileName = VTS.Common.VTSCommon.GetOrderNumber() + fileExt;
+
                 string filePath = context.Server.MapPath("/imageslib/" + fileName);
 
                 if (System.IO.File.Exists(filePath))
